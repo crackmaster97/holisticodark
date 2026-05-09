@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sanctum — Grimorio de Reservas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Eagle+Lake&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<style>
+  /* ─── RESET & BASE ────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --parchment:      #f2e2c4;
+    --parchment-lit:  #faf3e6;
+    --parchment-dark: #e4d2a8;
+    --parchment-edge: #d4c098;
+    --ink:            #1c1c1c;
+    --ink-soft:       #3a3028;
+    --ink-mid:        #5c4f42;
+    --ink-light:      #8a7b6b;
+    --wax-red:        #7a1c1c;
+    --wax-red-hover:  #5e1414;
+    --gold-ancient:   #b8860b;
+    --gold-pale:      #d4a843;
+    --gold-glow:      #e8c96a;
+    --dark-bg:        #141210;
+    --dark-surface:   #1c1815;
+    --line-aged:      rgba(60,40,20,0.2);
+    --line-aged-strong: rgba(60,40,20,0.35);
+    --line-dark:      rgba(180,150,100,0.2);
+    --radius-sm:      2px;
+    --ease-page:      cubic-bezier(0.4, 0.0, 0.2, 1);
+    --ease-ink:       cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  html { scroll-behavior: smooth; font-size: 16px; }
+
+  body {
+    background: var(--dark-bg);
+    background-image:
+      radial-gradient(ellipse at 50% 0%, #1f1b16 0%, #0d0b09 60%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 180px;
+    color: var(--ink);
+    font-family: 'Crimson Text', 'Georgia', serif;
+    font-weight: 400;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* ─── PARCHMENT TEXTURE OVERLAY ───────────────────────── */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise2)'/%3E%3C/svg%3E");
+    background-size: 220px;
+  }
+
+  /* ─── CORNER ALCHEMICAL SYMBOLS ──────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.06;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Ccircle cx='30' cy='30' r='28' fill='none' stroke='%23b8860b' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='12' fill='none' stroke='%23b8860b' stroke-width='0.4'/%3E%3Cline x1='30' y1='2' x2='30' y2='18' stroke='%23b8860b' stroke-width='0.5'/%3E%3Cline x1='30' y1='42' x2='30' y2='58' stroke='%23b8860b' stroke-width='0.5'/%3E%3Cline x1='2' y1='30' x2='18' y2='30' stroke='%23b8860b' stroke-width='0.5'/%3E%3Cline x1='42' y1='30' x2='58' y2='30' stroke='%23b8860b' stroke-width='0.5'/%3E%3C/svg%3E") top 1rem left 1rem no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpolygon points='30,2 58,30 30,58 2,30' fill='none' stroke='%23b8860b' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='8' fill='none' stroke='%23b8860b' stroke-width='0.4'/%3E%3C/svg%3E") top 1rem right 1rem no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 2 L30 58 M2 30 L58 30 M9 9 L51 51 M9 51 L51 9' fill='none' stroke='%23b8860b' stroke-width='0.4'/%3E%3Ccircle cx='30' cy='30' r='22' fill='none' stroke='%23b8860b' stroke-width='0.5'/%3E%3C/svg%3E") bottom 1rem left 1rem no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 4 L56 30 L30 56 L4 30 Z' fill='none' stroke='%23b8860b' stroke-width='0.5'/%3E%3Ccircle cx='30' cy='30' r='14' fill='none' stroke='%23b8860b' stroke-width='0.4'/%3E%3Ccircle cx='30' cy='30' r='3' fill='%23b8860b' fill-opacity='0.3'/%3E%3C/svg%3E") bottom 1rem right 1rem no-repeat;
+    background-size: 50px, 50px, 50px, 50px;
+  }
+
+  /* ─── TYPOGRAPHY ──────────────────────────────────────── */
+  h1, h2, h3, .grimoire-title {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    line-height: 1.2;
+    color: var(--ink);
+    text-shadow: 0.3px 0.3px 0.6px rgba(28,28,28,0.25), 0 0 0.3px rgba(28,28,28,0.08);
+  }
+
+  h1 { font-size: clamp(2.6rem, 7vw, 5.5rem); }
+  h2 { font-size: clamp(1.6rem, 3.5vw, 2.4rem); }
+  h3 { font-size: 1.2rem; }
+
+  p, li, span, label, input, textarea, select, button {
+    font-family: 'Crimson Text', 'Georgia', serif;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+  }
+
+  /* ─── LAYOUT ──────────────────────────────────────────── */
+  .container {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 clamp(1.5rem, 5vw, 4rem);
+    position: relative;
+    z-index: 1;
+  }
+
+  section {
+    padding: clamp(3.5rem, 8vw, 7rem) 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ─── PARCHMENT SECTION BACKGROUND ───────────────────── */
+  .parchment-section {
+    background:
+      linear-gradient(180deg, #f2e2c4 0%, #efe0c0 15%, #f4e7ce 30%, #f0dfc1 50%, #ecd9b8 70%, #f3e5cb 85%, #f1e0c3 100%);
+    background-color: #f2e2c4;
+    position: relative;
+    box-shadow:
+      0 0 60px rgba(0,0,0,0.55),
+      0 0 120px rgba(0,0,0,0.3),
+      inset 0 0 80px rgba(180,150,100,0.25),
+      inset 0 0 20px rgba(0,0,0,0.06);
+    border-top: 2px solid rgba(180,140,80,0.3);
+    border-bottom: 2px solid rgba(180,140,80,0.3);
+  }
+
+  .parchment-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.035;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='pn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23pn)'/%3E%3C/svg%3E");
+    background-size: 200px;
+    z-index: 0;
+  }
+
+  .parchment-section > .container { position: relative; z-index: 1; }
+
+  /* ─── HEADER ──────────────────────────────────────────── */
+  header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 1.4rem clamp(1.5rem, 5vw, 4rem);
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(20,18,16,0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(180,150,100,0.2);
+    box-shadow: 0 1px 20px rgba(0,0,0,0.5);
+    transition: border-color 0.5s var(--ease-ink);
+  }
+
+  .logo {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold-pale);
+    text-decoration: none;
+    text-shadow: 0 0 12px rgba(200,160,60,0.3);
+    transition: color 0.4s var(--ease-ink), text-shadow 0.4s var(--ease-ink);
+  }
+  .logo:hover { color: var(--gold-glow); text-shadow: 0 0 20px rgba(220,180,80,0.5); }
+
+  .logo span {
+    display: inline-block;
+    width: 1px; height: 1em;
+    background: var(--gold-ancient);
+    margin: 0 0.6em;
+    vertical-align: middle;
+    opacity: 0.7;
+  }
+
+  nav { display: flex; gap: 2.5rem; align-items: center; }
+
+  nav a {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(200,180,150,0.7);
+    text-decoration: none;
+    transition: color 0.3s var(--ease-ink), text-shadow 0.3s var(--ease-ink);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+  nav a:hover { color: var(--gold-pale); text-shadow: 0 0 10px rgba(200,160,60,0.3); }
+
+  /* ─── HERO ────────────────────────────────────────────── */
+  #hero {
+    min-height: 100svh;
+    display: flex; align-items: center;
+    padding-top: 80px;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  #hero .container {
+    background:
+      linear-gradient(180deg, #f5e9d3 0%, #f2e2c4 10%, #efe0c0 25%, #f4e7ce 50%, #f0dfc1 70%, #ecd9b8 85%, #f3e5cb 100%);
+    border-radius: 2px;
+    padding: clamp(2rem, 6vw, 5rem) clamp(2rem, 5vw, 4rem);
+    box-shadow:
+      0 0 80px rgba(0,0,0,0.6),
+      0 0 150px rgba(0,0,0,0.35),
+      inset 0 0 100px rgba(180,150,100,0.2),
+      inset 0 0 25px rgba(0,0,0,0.05);
+    position: relative;
+    border: 1px solid rgba(180,140,80,0.25);
+  }
+
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    width: 100%;
+  }
+
+  .hero-text { opacity: 0; animation: fadeUp 1.4s var(--ease-page) 0.2s forwards; }
+
+  .hero-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--wax-red);
+    margin-bottom: 1.8rem;
+    display: flex; align-items: center; gap: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+  .hero-eyebrow::before {
+    content: '❧';
+    display: inline-block;
+    font-size: 1.2rem;
+    color: var(--gold-ancient);
+  }
+
+  .hero-title { margin-bottom: 1.5rem; color: var(--ink); }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-mid);
+    line-height: 2;
+    max-width: 36ch;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+  }
+
+  .hero-visual {
+    opacity: 0;
+    animation: fadeIn 1.8s var(--ease-page) 0.5s forwards;
+    display: flex; justify-content: center; align-items: center;
+  }
+
+  .hero-emblem {
+    width: min(420px, 90%);
+    aspect-ratio: 1;
+    border: 1.5px solid var(--line-aged-strong);
+    border-radius: 50%;
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+    background: radial-gradient(circle, rgba(200,160,80,0.04) 0%, transparent 70%);
+  }
+
+  .hero-emblem::before {
+    content: '';
+    position: absolute; inset: 14px;
+    border: 1px solid var(--line-aged);
+    border-radius: 50%;
+  }
+  .hero-emblem::after {
+    content: '';
+    position: absolute; inset: 28px;
+    border: 1px dashed rgba(180,130,40,0.3);
+    border-radius: 50%;
+  }
+
+  .emblem-svg {
+    width: 55%;
+    opacity: 0.5;
+  }
+
+  /* ─── BUTTON STYLES ───────────────────────────────────── */
+  .btn {
+    display: inline-block;
+    padding: 0.9rem 2.2rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.5s var(--ease-ink);
+    border-radius: 1px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: var(--wax-red);
+    color: #f5ede0;
+    border-color: var(--wax-red);
+    box-shadow: 0 2px 12px rgba(122,28,28,0.35), inset 0 1px 0 rgba(255,255,255,0.08);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .btn-primary:hover {
+    background: var(--wax-red-hover);
+    border-color: var(--wax-red-hover);
+    box-shadow: 0 4px 20px rgba(122,28,28,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+    transform: translateY(-1px);
+  }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--line-aged-strong);
+    border-radius: 1px;
+  }
+  .btn-outline:hover {
+    background: var(--ink);
+    color: var(--parchment-lit);
+    border-color: var(--ink);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  }
+
+  .btn-gold {
+    background: var(--gold-ancient);
+    color: #fdf8f0;
+    border-color: var(--gold-ancient);
+    box-shadow: 0 2px 12px rgba(184,134,11,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  }
+  .btn-gold:hover {
+    background: #a0750a;
+    border-color: #a0750a;
+    box-shadow: 0 4px 20px rgba(184,134,11,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
+    transform: translateY(-1px);
+  }
+
+  /* Small header CTA button */
+  header .btn-outline {
+    padding: 0.5rem 1.3rem;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    border-color: rgba(180,150,100,0.4);
+    color: rgba(200,180,150,0.85);
+  }
+  header .btn-outline:hover {
+    background: var(--wax-red);
+    color: #f5ede0;
+    border-color: var(--wax-red);
+    box-shadow: 0 2px 16px rgba(122,28,28,0.4);
+  }
+
+  /* ─── DIVIDER ─────────────────────────────────────────── */
+  .divider {
+    display: flex; align-items: center; gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1;
+    height: 1px;
+    background: var(--line-aged);
+  }
+  .divider-icon { color: var(--gold-ancient); opacity: 0.6; }
+
+  /* ─── SECTION HEADER ──────────────────────────────────── */
+  .section-header {
+    text-align: center;
+    margin-bottom: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .section-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--wax-red);
+    margin-bottom: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+  .section-title {
+    color: var(--ink);
+    margin-bottom: 0.8rem;
+  }
+  .section-sub {
+    max-width: 42ch;
+    margin: 0 auto;
+    color: var(--ink-mid);
+    font-style: italic;
+  }
+
+  /* ─── SERVICES ────────────────────────────────────────── */
+  #servicios {
+    background:
+      linear-gradient(180deg, #f0ddbf 0%, #f5e6cf 20%, #f2e2c4 50%, #eedcbd 80%, #f3e5cb 100%);
+    background-color: #f0ddbf;
+    box-shadow:
+      0 0 60px rgba(0,0,0,0.5),
+      0 0 120px rgba(0,0,0,0.25),
+      inset 0 0 80px rgba(170,140,90,0.2),
+      inset 0 0 20px rgba(0,0,0,0.04);
+    border-top: 2px solid rgba(180,140,80,0.3);
+    border-bottom: 2px solid rgba(180,140,80,0.3);
+    position: relative;
+  }
+  #servicios::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='sn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23sn)'/%3E%3C/svg%3E");
+    background-size: 200px;
+    z-index: 0;
+  }
+  #servicios .container { position: relative; z-index: 1; }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5px;
+    border: 1px solid var(--line-aged);
+    background: var(--line-aged);
+  }
+
+  .service-card {
+    background:
+      linear-gradient(180deg, #faf3e6 0%, #f5e9d3 50%, #f2e2c4 100%);
+    padding: 2.8rem 2.2rem;
+    cursor: pointer;
+    transition: all 0.6s var(--ease-page);
+    position: relative;
+    display: flex; flex-direction: column;
+    border: 1px solid transparent;
+  }
+  .service-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: radial-gradient(circle at center, rgba(122,28,28,0.06) 0%, rgba(184,134,11,0.04) 40%, transparent 70%);
+    transition: opacity 0.6s var(--ease-ink);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .service-card:hover {
+    background: linear-gradient(180deg, #fdfaf5 0%, #f8f0e0 50%, #f5e9d3 100%);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15), inset 0 0 40px rgba(184,134,11,0.06);
+    transform: translateY(-3px);
+  }
+  .service-card.selected {
+    background: linear-gradient(180deg, #faf3e6 0%, #f4e5cc 50%, #f0dfc1 100%);
+    box-shadow: 0 0 40px rgba(184,134,11,0.2), 0 4px 20px rgba(0,0,0,0.2), inset 0 0 60px rgba(184,134,11,0.08);
+    border-color: rgba(184,134,11,0.35);
+  }
+  .service-card.selected::before { opacity: 1; }
+  .service-card > * { position: relative; z-index: 1; }
+
+  .service-card-icon {
+    width: 38px; height: 38px;
+    margin-bottom: 1.8rem;
+    color: var(--wax-red);
+    transition: all 0.5s var(--ease-ink);
+    opacity: 0.7;
+  }
+  .service-card:hover .service-card-icon,
+  .service-card.selected .service-card-icon {
+    color: var(--gold-ancient);
+    opacity: 1;
+    transform: scale(1.06);
+    filter: drop-shadow(0 0 6px rgba(184,134,11,0.35));
+  }
+
+  .service-card-title {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    color: var(--ink);
+    margin-bottom: 0.7rem;
+    transition: color 0.5s var(--ease-ink);
+    letter-spacing: 0.03em;
+    text-shadow: 0.2px 0.2px 0.4px rgba(28,28,28,0.2);
+  }
+  .service-card:hover .service-card-title,
+  .service-card.selected .service-card-title { color: #1a0a0a; }
+
+  .service-card-desc {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    line-height: 1.9;
+    color: var(--ink-mid);
+    flex: 1;
+    margin-bottom: 1.8rem;
+    transition: color 0.5s var(--ease-ink);
+  }
+  .service-card:hover .service-card-desc,
+  .service-card.selected .service-card-desc { color: var(--ink-soft); }
+
+  .service-card-meta {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    border-top: 1px solid var(--line-aged);
+    padding-top: 1.3rem;
+    transition: border-color 0.5s var(--ease-ink);
+  }
+  .service-card:hover .service-card-meta,
+  .service-card.selected .service-card-meta { border-color: rgba(184,134,11,0.30); }
+
+  .service-price {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: var(--ink);
+    transition: color 0.5s var(--ease-ink);
+  }
+  .service-price sup {
+    font-size: 0.65rem;
+    vertical-align: super;
+    font-family: 'Crimson Text', serif;
+    font-weight: 400;
+  }
+  .service-card:hover .service-price,
+  .service-card.selected .service-price { color: var(--wax-red); }
+
+  .service-duration {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    transition: color 0.5s var(--ease-ink);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+  .service-card:hover .service-duration,
+  .service-card.selected .service-duration { color: var(--ink-mid); }
+
+  .service-check {
+    position: absolute; top: 1.3rem; right: 1.3rem;
+    width: 22px; height: 22px;
+    border: 1.5px solid var(--line-aged);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0;
+    transition: all 0.4s var(--ease-ink);
+    z-index: 2;
+  }
+  .service-card.selected .service-check {
+    opacity: 1;
+    background: var(--wax-red);
+    border-color: var(--wax-red);
+    box-shadow: 0 0 10px rgba(122,28,28,0.4);
+  }
+  .service-check svg { width: 10px; color: #fdf8f0; }
+
+  /* ─── BOOKING SECTION ─────────────────────────────────── */
+  #reserva {
+    background:
+      linear-gradient(180deg, #f5e9d3 0%, #f2e2c4 15%, #efe0c0 30%, #f4e7ce 55%, #f0dfc1 75%, #f3e5cb 100%);
+    background-color: #f2e2c4;
+    box-shadow:
+      0 0 60px rgba(0,0,0,0.5),
+      0 0 120px rgba(0,0,0,0.25),
+      inset 0 0 80px rgba(180,150,100,0.2),
+      inset 0 0 20px rgba(0,0,0,0.04);
+    border-top: 2px solid rgba(180,140,80,0.3);
+    border-bottom: 2px solid rgba(180,140,80,0.3);
+    position: relative;
+  }
+  #reserva::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='rn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23rn)'/%3E%3C/svg%3E");
+    background-size: 200px;
+    z-index: 0;
+  }
+  #reserva .container { position: relative; z-index: 1; }
+
+  .booking-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  /* ─── CALENDAR ────────────────────────────────────────── */
+  .calendar-wrap {
+    border: 1px solid var(--line-aged-strong);
+    border-radius: 1px;
+    overflow: hidden;
+    background: linear-gradient(180deg, #fdfaf5 0%, #f8f0e0 100%);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12), inset 0 0 30px rgba(180,150,100,0.08);
+  }
+
+  .calendar-header {
+    padding: 1.3rem 1.8rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--line-aged);
+    background: rgba(180,150,100,0.06);
+  }
+
+  .cal-nav {
+    background: none; border: none; cursor: pointer;
+    color: var(--ink-mid);
+    width: 30px; height: 30px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--line-aged);
+    border-radius: 1px;
+    transition: all 0.3s var(--ease-ink);
+    font-family: 'Crimson Text', serif;
+    font-size: 1rem;
+  }
+  .cal-nav:hover {
+    border-color: var(--wax-red);
+    color: var(--wax-red);
+    box-shadow: 0 0 8px rgba(122,28,28,0.15);
+  }
+
+  .cal-month {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 1rem;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    color: var(--ink);
+    text-align: center;
+    text-shadow: 0.2px 0.2px 0.4px rgba(28,28,28,0.15);
+  }
+  .cal-month small {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--ink-light);
+    text-transform: uppercase;
+    margin-top: 0.1rem;
+  }
+
+  .calendar-grid { padding: 1.3rem 1.8rem 1.8rem; }
+
+  .cal-days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+    margin-bottom: 0.6rem;
+  }
+  .cal-day-name {
+    text-align: center;
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--wax-red);
+    padding: 0.25rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    opacity: 0.7;
+  }
+
+  .cal-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 3px;
+  }
+
+  .cal-day {
+    aspect-ratio: 1;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-radius: 1px;
+    transition: all 0.35s var(--ease-ink);
+    position: relative;
+    font-family: 'Crimson Text', serif;
+  }
+  .cal-day:hover:not(.past):not(.empty) {
+    border-color: var(--line-aged-strong);
+    background: rgba(184,134,11,0.06);
+  }
+  .cal-day.past { color: var(--ink-light); cursor: default; pointer-events: none; opacity: 0.5; }
+  .cal-day.empty { cursor: default; }
+  .cal-day.today {
+    color: var(--wax-red);
+    font-weight: 600;
+    border: 1px solid rgba(122,28,28,0.3);
+  }
+  .cal-day.selected {
+    background: var(--wax-red);
+    color: #fdf8f0;
+    border-color: var(--wax-red);
+    box-shadow: 0 0 16px rgba(122,28,28,0.35), inset 0 0 8px rgba(0,0,0,0.2);
+  }
+  .cal-day.has-slots::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%; transform: translateX(-50%);
+    width: 3px; height: 3px;
+    background: var(--gold-ancient);
+    border-radius: 50%;
+  }
+  .cal-day.selected::after { background: var(--gold-glow); }
+
+  /* ─── TIME SLOTS ──────────────────────────────────────── */
+  .time-slots {
+    margin-top: 1.3rem;
+    padding-top: 1.3rem;
+    border-top: 1px solid var(--line-aged);
+  }
+
+  .time-slots-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    margin-bottom: 0.9rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+
+  .slots-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+  }
+
+  .time-slot {
+    padding: 0.6rem 0.4rem;
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    border: 1px solid var(--line-aged);
+    border-radius: 1px;
+    cursor: pointer;
+    transition: all 0.35s var(--ease-ink);
+    background: rgba(255,255,255,0.4);
+    font-family: 'Crimson Text', serif;
+  }
+  .time-slot:hover {
+    border-color: var(--ink);
+    background: rgba(255,255,255,0.7);
+  }
+  .time-slot.selected {
+    background: var(--ink);
+    color: var(--parchment-lit);
+    border-color: var(--ink);
+    box-shadow: 0 0 14px rgba(0,0,0,0.3), inset 0 0 6px rgba(255,255,255,0.05);
+  }
+  .time-slot.past {
+    color: var(--ink-light);
+    cursor: default;
+    pointer-events: none;
+    background: rgba(0,0,0,0.03);
+    opacity: 0.5;
+    text-decoration: line-through;
+  }
+
+  /* ─── FORM ────────────────────────────────────────────── */
+  .form-wrap {
+    display: flex; flex-direction: column; gap: 1.6rem;
+  }
+
+  .form-summary {
+    padding: 1.3rem 1.8rem;
+    border: 1px solid var(--line-aged-strong);
+    border-radius: 1px;
+    background: linear-gradient(180deg, #fdfaf5 0%, #f7efe0 100%);
+    margin-bottom: 0.3rem;
+    box-shadow: inset 0 0 20px rgba(180,150,100,0.06);
+  }
+  .form-summary-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--wax-red);
+    margin-bottom: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+  }
+  .form-summary-value {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 0.95rem;
+    font-style: normal;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .form-summary-empty {
+    font-size: 0.8rem;
+    color: var(--ink-light);
+    font-style: italic;
+    font-family: 'Crimson Text', serif;
+  }
+
+  .field-group { position: relative; }
+
+  .field-label {
+    display: block;
+    font-size: 0.58rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mid);
+    margin-bottom: 0.5rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+
+  .field-input, .field-select, .field-textarea {
+    width: 100%;
+    padding: 0.8rem 1.1rem;
+    font-family: 'Crimson Text', 'Georgia', serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: rgba(255,255,255,0.6);
+    border: 1px solid var(--line-aged);
+    border-radius: 1px;
+    outline: none;
+    transition: all 0.35s var(--ease-ink);
+    -webkit-appearance: none;
+    appearance: none;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .field-input:focus, .field-select:focus, .field-textarea:focus {
+    border-color: var(--wax-red);
+    box-shadow: 0 0 0 3px rgba(122,28,28,0.06), inset 0 1px 3px rgba(0,0,0,0.04);
+    background: rgba(255,255,255,0.85);
+  }
+  .field-input::placeholder, .field-textarea::placeholder {
+    color: var(--ink-light);
+    font-style: italic;
+    opacity: 0.6;
+  }
+
+  .field-textarea { resize: none; height: 80px; line-height: 1.8; }
+
+  .field-select-wrap { position: relative; }
+  .field-select-wrap::after {
+    content: '▾';
+    position: absolute;
+    right: 1rem; top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-mid);
+    pointer-events: none;
+    font-size: 0.7rem;
+  }
+  .field-select { cursor: pointer; padding-right: 2.5rem; }
+  .field-select option { background: #fdfaf5; color: var(--ink); }
+
+  .form-cta {
+    padding-top: 0.4rem;
+    border-top: 1px solid var(--line-aged);
+    display: flex; flex-direction: column; gap: 0.7rem;
+  }
+  .form-cta-note {
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-light);
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ─── PHILOSOPHY STRIP ────────────────────────────────── */
+  #filosofia {
+    background: var(--dark-surface);
+    background-image:
+      radial-gradient(ellipse at 50% 50%, #241f1a 0%, #141210 70%),
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='fn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.6' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23fn)'/%3E%3C/svg%3E");
+    background-size: 100% 100%, 180px;
+    padding: clamp(3rem, 7vw, 5.5rem) 0;
+    box-shadow: 0 0 80px rgba(0,0,0,0.6), inset 0 0 60px rgba(0,0,0,0.4);
+    border-top: 2px solid rgba(180,140,80,0.25);
+    border-bottom: 2px solid rgba(180,140,80,0.25);
+  }
+  #filosofia .section-eyebrow { color: var(--gold-pale); }
+  #filosofia .section-title { color: var(--parchment-lit); text-shadow: 0.3px 0.3px 0.6px rgba(250,240,220,0.2); }
+  #filosofia .section-sub { color: rgba(220,200,170,0.5); }
+
+  .pillars {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0;
+    margin-top: 2.5rem;
+    border: 1px solid rgba(180,150,100,0.12);
+  }
+
+  .pillar {
+    padding: 2.2rem 1.8rem;
+    border-right: 1px solid rgba(180,150,100,0.12);
+    text-align: center;
+    transition: background 0.5s var(--ease-ink);
+  }
+  .pillar:last-child { border-right: none; }
+  .pillar:hover { background: rgba(180,150,100,0.04); }
+
+  .pillar-icon {
+    width: 26px; height: 26px;
+    color: var(--gold-ancient);
+    margin: 0 auto 1rem;
+    opacity: 0.65;
+    transition: opacity 0.4s var(--ease-ink), transform 0.4s var(--ease-ink);
+  }
+  .pillar:hover .pillar-icon { opacity: 1; transform: scale(1.08); }
+
+  .pillar-title {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--parchment-lit);
+    margin-bottom: 0.5rem;
+    text-shadow: 0.2px 0.2px 0.4px rgba(250,240,220,0.15);
+  }
+
+  .pillar-text {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    color: rgba(200,180,155,0.5);
+    line-height: 1.9;
+  }
+
+  /* ─── FOOTER ──────────────────────────────────────────── */
+  footer {
+    background: var(--dark-bg);
+    border-top: 1px solid rgba(180,150,100,0.18);
+    padding: 2.5rem clamp(1.5rem, 5vw, 4rem);
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    position: relative; z-index: 1;
+  }
+
+  .footer-logo {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 1.2rem;
+    color: var(--gold-pale);
+    letter-spacing: 0.06em;
+    text-shadow: 0 0 10px rgba(200,160,60,0.3);
+  }
+
+  .footer-copy {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+    color: rgba(180,160,140,0.45);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+  }
+
+  /* ─── MODAL ───────────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,8,6,0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 500;
+    display: flex; align-items: center; justify-content: center;
+    padding: 2rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s var(--ease-ink);
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: linear-gradient(180deg, #fdfaf5 0%, #f5e9d3 50%, #f2e2c4 100%);
+    border: 1px solid var(--line-aged-strong);
+    border-radius: 1px;
+    max-width: 500px; width: 100%;
+    padding: 3rem 3rem;
+    text-align: center;
+    transform: translateY(20px);
+    transition: transform 0.5s var(--ease-page);
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 120px rgba(0,0,0,0.3), inset 0 0 40px rgba(180,150,100,0.1);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-icon {
+    width: 52px; height: 52px;
+    background: rgba(180,150,100,0.08);
+    border: 1px solid var(--line-aged);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.8rem;
+    color: var(--wax-red);
+  }
+
+  .modal-title {
+    font-family: 'Eagle Lake', 'Georgia', serif;
+    font-size: 1.7rem;
+    color: var(--ink);
+    margin-bottom: 0.7rem;
+  }
+
+  .modal-text {
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: var(--ink-mid);
+    line-height: 2;
+    margin-bottom: 1.8rem;
+    font-style: italic;
+  }
+
+  .modal-summary {
+    background: rgba(255,255,255,0.5);
+    border: 1px solid var(--line-aged);
+    border-radius: 1px;
+    padding: 1.3rem;
+    margin-bottom: 1.8rem;
+    text-align: left;
+    box-shadow: inset 0 0 15px rgba(180,150,100,0.06);
+  }
+  .modal-summary-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0.35rem 0;
+  }
+  .modal-summary-row + .modal-summary-row {
+    border-top: 1px solid var(--line-aged);
+    margin-top: 0.35rem;
+  }
+  .modal-summary-key {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--wax-red);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+  }
+  .modal-summary-val {
+    font-family: 'Crimson Text', 'Georgia', serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .modal-actions { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: none; border: none; cursor: pointer;
+    color: var(--ink-light); font-size: 1.4rem;
+    transition: color 0.3s var(--ease-ink);
+    line-height: 1;
+    font-family: 'Crimson Text', serif;
+  }
+  .modal-close:hover { color: var(--wax-red); }
+
+  /* ─── VALIDATION ──────────────────────────────────────── */
+  .field-group.error .field-input,
+  .field-group.error .field-select {
+    border-color: #8b1a1a;
+    box-shadow: 0 0 0 2px rgba(139,26,26,0.08);
+  }
+  .field-error {
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    color: #8b1a1a;
+    margin-top: 0.35rem;
+    display: none;
+    font-style: italic;
+  }
+  .field-group.error .field-error { display: block; }
+
+  /* ─── TOAST ───────────────────────────────────────────── */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--dark-surface);
+    color: var(--parchment-lit);
+    padding: 0.9rem 1.6rem;
+    border-radius: 1px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    z-index: 600;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s var(--ease-ink);
+    pointer-events: none;
+    max-width: 300px;
+    border: 1px solid rgba(180,150,100,0.3);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    font-style: italic;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ─── SCROLL INDICATOR ────────────────────────────────── */
+  .scroll-hint {
+    display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+    margin-top: 3.5rem;
+    opacity: 0;
+    animation: fadeIn 1s var(--ease-ink) 1.5s forwards;
+  }
+  .scroll-hint span {
+    font-size: 0.55rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-light);
+    font-family: 'Montserrat', sans-serif;
+  }
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--ink-mid), transparent);
+    animation: scrollLine 2s var(--ease-ink) infinite;
+  }
+
+  /* ─── ANIMATIONS ──────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes scrollLine {
+    0%   { transform: scaleY(0) translateY(-100%); transform-origin: top; opacity: 1; }
+    50%  { transform: scaleY(1) translateY(0); opacity: 1; }
+    100% { transform: scaleY(0) translateY(100%); opacity: 0; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 1s var(--ease-page), transform 1s var(--ease-page);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ─── INK BLEED EFFECT ON SELECTION ──────────────────── */
+  .ink-bleed {
+    animation: inkBleed 0.6s var(--ease-ink) forwards;
+  }
+  @keyframes inkBleed {
+    0%   { box-shadow: 0 0 0 0 rgba(28,28,28,0.4); }
+    40%  { box-shadow: 0 0 0 8px rgba(28,28,28,0.08), 0 0 20px rgba(28,28,28,0.1); }
+    100% { box-shadow: 0 0 0 12px rgba(28,28,28,0), 0 0 30px rgba(28,28,28,0); }
+  }
+
+  /* ─── RESPONSIVE ──────────────────────────────────────── */
+  @media (max-width: 768px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .hero-visual { display: none; }
+    .booking-layout { grid-template-columns: 1fr; gap: 2rem; }
+    nav { display: none; }
+    .pillar { border-right: none; border-bottom: 1px solid rgba(180,150,100,0.12); }
+    .pillar:last-child { border-bottom: none; }
+    .modal { padding: 2.2rem 1.5rem; }
+    footer { justify-content: center; text-align: center; }
+    #hero .container { padding: 2rem 1.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    .slots-grid { grid-template-columns: repeat(2, 1fr); }
+    .services-grid { gap: 0; }
+    .service-card { border-bottom: 1px solid var(--line-aged); }
+    .service-card { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ░░ HEADER ░░ -->
+<header>
+  <a href="#" class="logo">Sanctum<span></span>Grimorio</a>
+  <nav>
+    <a href="#servicios">Artes</a>
+    <a href="#reserva">Consultas</a>
+    <a href="#filosofia">Doctrina</a>
+  </nav>
+  <a href="#reserva" class="btn btn-outline">Solicitar Audiencia</a>
+</header>
+
+<!-- ░░ HERO ░░ -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <p class="hero-eyebrow">Portal de Consultas Exclusivo</p>
+        <h1>Tu Espacio<br>de Revelación<br>Arcana</h1>
+        <p class="hero-subtitle">Un santuario de sabiduría ancestral, tejido para quienes buscan la transformación profunda del alma a través de las artes ocultas de mayor refinamiento.</p>
+        <a href="#reserva" class="btn btn-primary"><span>Consultar Oráculo →</span></a>
+        <div class="scroll-hint">
+          <div class="scroll-line"></div>
+          <span>Descifrar</span>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-emblem">
+          <!-- Sacred geometry SVG -->
+          <svg class="emblem-svg" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="80" stroke="#b8860b" stroke-width="0.5"/>
+            <circle cx="100" cy="60" r="40" stroke="#b8860b" stroke-width="0.5"/>
+            <circle cx="65.4" cy="80" r="40" stroke="#b8860b" stroke-width="0.5"/>
+            <circle cx="134.6" cy="80" r="40" stroke="#b8860b" stroke-width="0.5"/>
+            <circle cx="65.4" cy="120" r="40" stroke="#b8860b" stroke-width="0.5"/>
+            <circle cx="134.6" cy="120" r="40" stroke="#b8860b" stroke-width="0.5"/>
+            <circle cx="100" cy="140" r="40" stroke="#b8860b" stroke-width="0.5"/>
+            <circle cx="100" cy="100" r="40" stroke="#b8860b" stroke-width="0.7"/>
+            <polygon points="100,30 164,65 164,135 100,170 36,135 36,65" stroke="#b8860b" stroke-width="0.4" fill="none"/>
+            <line x1="100" y1="30" x2="100" y2="170" stroke="#b8860b" stroke-width="0.3"/>
+            <line x1="36" y1="65" x2="164" y2="135" stroke="#b8860b" stroke-width="0.3"/>
+            <line x1="164" y1="65" x2="36" y2="135" stroke="#b8860b" stroke-width="0.3"/>
+            <circle cx="100" cy="100" r="4" fill="#7a1c1c" fill-opacity="0.6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ SERVICES ░░ -->
+<section id="servicios">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Catálogo de Artes Arcanas</p>
+      <h2 class="section-title">Servicios Iniciáticos</h2>
+      <p class="section-sub">Cada sesión es un rito de paso personal, ejecutado con intención, precisión y presencia absoluta.</p>
+    </div>
+
+    <div class="services-grid reveal">
+
+      <div class="service-card" data-service="Lectura del Tarot Arcano" data-price="USD 120" data-duration="90 min" onclick="selectService(this)">
+        <div class="service-check">
+          <svg viewBox="0 0 10 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 3.5,7 9,1"/></svg>
+        </div>
+        <svg class="service-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M12 2v4m0 12v4M2 12h4m12 0h4"/>
+          <circle cx="12" cy="12" r="6" stroke-dasharray="2 2"/>
+        </svg>
+        <h3 class="service-card-title">Lectura del Tarot Arcano</h3>
+        <p class="service-card-desc">Una lectura profunda que integra arquetipos del alma, numerología esotérica y análisis de patrones kármicos para revelar el mapa de tu proceso interior.</p>
+        <div class="service-card-meta">
+          <span class="service-price"><sup>USD</sup> 120</span>
+          <span class="service-duration">90 minutos</span>
+        </div>
+      </div>
+
+      <div class="service-card" data-service="Armonización Energética Ritual" data-price="USD 180" data-duration="120 min" onclick="selectService(this)">
+        <div class="service-check">
+          <svg viewBox="0 0 10 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 3.5,7 9,1"/></svg>
+        </div>
+        <svg class="service-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+          <circle cx="12" cy="12" r="2"/>
+          <path d="M12 7v3m0 4v3"/>
+        </svg>
+        <h3 class="service-card-title">Armonización Energética Ritual</h3>
+        <p class="service-card-desc">Ceremonia de reequilibrio del campo áurico mediante técnicas de biomagnetismo ancestral, reiki avanzado y alineación de centros energéticos con cristales iniciáticos.</p>
+        <div class="service-card-meta">
+          <span class="service-price"><sup>USD</sup> 180</span>
+          <span class="service-duration">120 minutos</span>
+        </div>
+      </div>
+
+      <div class="service-card" data-service="Viaje a los Registros Akáshicos" data-price="USD 220" data-duration="150 min" onclick="selectService(this)">
+        <div class="service-check">
+          <svg viewBox="0 0 10 8" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 3.5,7 9,1"/></svg>
+        </div>
+        <svg class="service-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a10 10 0 0 1 0 20"/>
+          <path d="M12 2a10 10 0 0 0 0 20"/>
+          <circle cx="12" cy="12" r="4"/>
+          <path d="M8 12h8M12 8v8"/>
+        </svg>
+        <h3 class="service-card-title">Viaje a los Registros Akáshicos</h3>
+        <p class="service-card-desc">Acceso profundo a la biblioteca del alma para explorar patrones de vidas pasadas, contratos sagrados, misión de vida y bloqueos transgeneracionales con guía iniciática compasiva.</p>
+        <div class="service-card-meta">
+          <span class="service-price"><sup>USD</sup> 220</span>
+          <span class="service-duration">150 minutos</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ░░ BOOKING ░░ -->
+<section id="reserva">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Agendamiento Sagrado</p>
+      <h2 class="section-title">Solicitud de Audiencia</h2>
+      <p class="section-sub">Selecciona la fecha y horario de tu preferencia. Recibirás confirmación en menos de 24 horas.</p>
+    </div>
+
+    <div class="booking-layout">
+
+      <!-- Calendar -->
+      <div class="reveal">
+        <div class="calendar-wrap">
+          <div class="calendar-header">
+            <button class="cal-nav" id="prevMonth" onclick="changeMonth(-1)" aria-label="Mes anterior">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="15,18 9,12 15,6"/></svg>
+            </button>
+            <div class="cal-month">
+              <span id="calMonthName">—</span>
+              <small id="calYear">—</small>
+            </div>
+            <button class="cal-nav" id="nextMonth" onclick="changeMonth(1)" aria-label="Mes siguiente">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="9,18 15,12 9,6"/></svg>
+            </button>
+          </div>
+          <div class="calendar-grid">
+            <div class="cal-days-header">
+              <div class="cal-day-name">Do</div>
+              <div class="cal-day-name">Lu</div>
+              <div class="cal-day-name">Ma</div>
+              <div class="cal-day-name">Mi</div>
+              <div class="cal-day-name">Ju</div>
+              <div class="cal-day-name">Vi</div>
+              <div class="cal-day-name">Sá</div>
+            </div>
+            <div class="cal-days" id="calDays"></div>
+
+            <div class="time-slots" id="timeSlotsSection" style="display:none;">
+              <p class="time-slots-label">Horarios disponibles</p>
+              <div class="slots-grid" id="slotsGrid"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="form-wrap reveal">
+
+        <div class="form-summary" id="bookingSummary">
+          <p class="form-summary-label">Selección Actual</p>
+          <p class="form-summary-value" id="summaryText">
+            <span class="form-summary-empty">Elija un servicio y fecha para continuar.</span>
+          </p>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="inputNombre">Nombre Completo</label>
+          <input class="field-input" type="text" id="inputNombre" placeholder="Tu nombre y apellido" autocomplete="name" />
+          <p class="field-error">Por favor ingresa tu nombre completo.</p>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="inputWA">Número de WhatsApp</label>
+          <input class="field-input" type="tel" id="inputWA" placeholder="+54 9 11 0000 0000" autocomplete="tel" />
+          <p class="field-error">Por favor ingresa un número de WhatsApp válido.</p>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="inputArea">Área de Enfoque</label>
+          <div class="field-select-wrap">
+            <select class="field-select" id="inputArea">
+              <option value="" disabled selected>Selecciona tu área principal</option>
+              <option value="Claridad y propósito de vida">Claridad y propósito de vida</option>
+              <option value="Relaciones y vínculos emocionales">Relaciones y vínculos emocionales</option>
+              <option value="Prosperidad y abundancia">Prosperidad y abundancia</option>
+              <option value="Sanación y liberación de bloqueos">Sanación y liberación de bloqueos</option>
+              <option value="Conexión espiritual y expansión">Conexión espiritual y expansión</option>
+              <option value="Misión de vida y karma">Misión de vida y karma</option>
+            </select>
+          </div>
+          <p class="field-error">Por favor selecciona un área de enfoque.</p>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label" for="inputNota">Nota Adicional <span style="opacity:.5;font-size:.55rem;">(Opcional)</span></label>
+          <textarea class="field-textarea" id="inputNota" placeholder="¿Hay algo específico que desees abordar o que el facilitador deba considerar?"></textarea>
+        </div>
+
+        <div class="form-cta">
+          <button class="btn btn-primary" onclick="handleSubmit()" style="text-align:center;border:none;">
+            <span>Solicitar Audiencia →</span>
+          </button>
+          <p class="form-cta-note">
+            Al enviar, recibirás confirmación por WhatsApp en menos de 24 hrs. · Discreción absoluta.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ PHILOSOPHY ░░ -->
+<section id="filosofia">
+  <div class="container">
+    <div class="section-header reveal">
+      <p class="section-eyebrow">Nuestra Doctrina</p>
+      <h2 class="section-title" style="color:#faf3e6;">Principios de la Práctica</h2>
+      <p class="section-sub" style="color:rgba(220,200,170,0.5);">Cada sesión es sostenida por pilares inamovibles de integridad, presencia y ética profesional.</p>
+    </div>
+    <div class="pillars reveal">
+      <div class="pillar">
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="M9 12l2 2 4-4"/>
+        </svg>
+        <p class="pillar-title">Discreción Absoluta</p>
+        <p class="pillar-text">Total confidencialidad en cada intercambio y proceso. Tu privacidad es sagrada.</p>
+      </div>
+      <div class="pillar">
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M12 14c-5 0-8 2-8 3v1h16v-1c0-1-3-3-8-3z"/>
+          <circle cx="12" cy="12" r="10" stroke-dasharray="3 3" opacity="0.4"/>
+        </svg>
+        <p class="pillar-title">Presencia Total</p>
+        <p class="pillar-text">Cada sesión recibe atención indivisa. Sin distracciones, sin protocolos genéricos.</p>
+      </div>
+      <div class="pillar">
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"/>
+          <circle cx="12" cy="12" r="1" fill="currentColor" opacity="0.5"/>
+        </svg>
+        <p class="pillar-title">Excelencia Ritual</p>
+        <p class="pillar-text">Más de una década de formación y práctica continua en tradiciones de alto nivel.</p>
+      </div>
+      <div class="pillar">
+        <svg class="pillar-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+          <circle cx="12" cy="12" r="2" fill="currentColor" opacity="0.3"/>
+        </svg>
+        <p class="pillar-title">Ética Incondicional</p>
+        <p class="pillar-text">Solo se trabaja desde el amor consciente, sin manipulación ni dependencia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ░░ FOOTER ░░ -->
+<footer>
+  <p class="footer-logo">Sanctum Grimorio</p>
+  <div class="divider" style="flex:0;width:50px;margin:0;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#b8860b" stroke-width="1" style="opacity:.5;">
+      <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+    </svg>
+  </div>
+  <p class="footer-copy">© 2025 Sanctum Holístico — Todos los derechos reservados. Consultas con absoluta reserva.</p>
+</footer>
+
+<!-- ░░ MODAL DE CONFIRMACIÓN ░░ -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Cerrar">×</button>
+    <div class="modal-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="8,12 11,15 16,9"/>
+      </svg>
+    </div>
+    <h3 class="modal-title">Confirmar Solicitud</h3>
+    <p class="modal-text">Por favor revisa los detalles de tu consulta antes de continuar a WhatsApp.</p>
+    <div class="modal-summary" id="modalSummaryContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-gold" onclick="goToWhatsApp()" style="border:none;text-align:center;width:100%;">
+        <span>Continuar a WhatsApp →</span>
+      </button>
+      <button class="btn btn-outline" onclick="closeModal()" style="text-align:center;background:none;width:100%;cursor:pointer;">
+        Modificar datos
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ░░ TOAST ░░ -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+const state = {
+  selectedService: null,
+  selectedDate: null,
+  selectedTime: null,
+  whatsappLink: null
+};
+
+const WHATSAPP_NUMBER = '5491100000000'; // ← Reemplaza con tu número real
+
+/* ═══════════════════════════════════════════════════════════
+   CALENDAR
+═══════════════════════════════════════════════════════════ */
+const months = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const today = new Date();
+let viewYear = today.getFullYear();
+let viewMonth = today.getMonth();
+
+const ALL_SLOTS = ['09:00','10:00','11:00','13:00','15:00','16:00','17:00','18:00','19:00'];
+
+function renderCalendar() {
+  document.getElementById('calMonthName').textContent = months[viewMonth];
+  document.getElementById('calYear').textContent = viewYear;
+  document.getElementById('prevMonth').disabled = (viewYear === today.getFullYear() && viewMonth <= today.getMonth());
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+  const grid = document.getElementById('calDays');
+  grid.innerHTML = '';
+
+  for (let i = 0; i < firstDay; i++) {
+    const empty = document.createElement('div');
+    empty.className = 'cal-day empty';
+    grid.appendChild(empty);
+  }
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'cal-day';
+    cell.textContent = d;
+
+    const cellDate = new Date(viewYear, viewMonth, d);
+    const isToday = (d === today.getDate() && viewMonth === today.getMonth() && viewYear === today.getFullYear());
+    const isPast = cellDate < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const isSunday = cellDate.getDay() === 0;
+
+    if (isPast || isSunday) {
+      cell.classList.add('past');
+    } else {
+      if (isToday) cell.classList.add('today');
+      cell.classList.add('has-slots');
+      cell.addEventListener('click', () => selectDate(d, cell));
+    }
+
+    if (state.selectedDate) {
+      const [sy, sm, sd] = state.selectedDate.split('-').map(Number);
+      if (d === sd && viewMonth === sm - 1 && viewYear === sy) cell.classList.add('selected');
+    }
+
+    grid.appendChild(cell);
+  }
+}
+
+function selectDate(day, el) {
+  document.querySelectorAll('.cal-day').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  // Ink bleed effect
+  el.classList.add('ink-bleed');
+  setTimeout(() => el.classList.remove('ink-bleed'), 600);
+  state.selectedDate = `${viewYear}-${String(viewMonth+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+  state.selectedTime = null;
+  renderTimeSlots();
+  updateSummary();
+}
+
+function renderTimeSlots() {
+  const section = document.getElementById('timeSlotsSection');
+  const grid = document.getElementById('slotsGrid');
+  grid.innerHTML = '';
+  section.style.display = 'block';
+
+  const isToday = (() => {
+    if (!state.selectedDate) return false;
+    const [sy, sm, sd] = state.selectedDate.split('-').map(Number);
+    return sy === today.getFullYear() && sm - 1 === today.getMonth() && sd === today.getDate();
+  })();
+
+  ALL_SLOTS.forEach(slot => {
+    const el = document.createElement('div');
+    el.className = 'time-slot';
+    el.textContent = slot;
+
+    if (isToday) {
+      const [h, m] = slot.split(':').map(Number);
+      const slotDate = new Date(); slotDate.setHours(h, m, 0);
+      if (slotDate <= today) { el.classList.add('past'); }
+    }
+
+    if (!el.classList.contains('past')) {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+        el.classList.add('selected');
+        el.classList.add('ink-bleed');
+        setTimeout(() => el.classList.remove('ink-bleed'), 600);
+        state.selectedTime = slot;
+        updateSummary();
+      });
+    }
+
+    if (state.selectedTime === slot) el.classList.add('selected');
+    grid.appendChild(el);
+  });
+}
+
+function changeMonth(dir) {
+  viewMonth += dir;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  renderCalendar();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SERVICE SELECTION
+═══════════════════════════════════════════════════════════ */
+function selectService(card) {
+  document.querySelectorAll('.service-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  card.classList.add('ink-bleed');
+  setTimeout(() => card.classList.remove('ink-bleed'), 600);
+  state.selectedService = {
+    name: card.dataset.service,
+    price: card.dataset.price,
+    duration: card.dataset.duration
+  };
+  updateSummary();
+  showToast('Arte seleccionada. Elige fecha y horario.');
+  setTimeout(() => document.getElementById('reserva').scrollIntoView({ behavior: 'smooth', block: 'start' }), 400);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SUMMARY UPDATE
+═══════════════════════════════════════════════════════════ */
+function updateSummary() {
+  const el = document.getElementById('summaryText');
+  const parts = [];
+  if (state.selectedService) parts.push(state.selectedService.name);
+  if (state.selectedDate) {
+    const [y, m, d] = state.selectedDate.split('-').map(Number);
+    parts.push(`${d} de ${months[m-1]} ${y}`);
+  }
+  if (state.selectedTime) parts.push(`${state.selectedTime} hrs`);
+
+  if (parts.length === 0) {
+    el.innerHTML = '<span class="form-summary-empty">Elija un servicio y fecha para continuar.</span>';
+  } else {
+    el.textContent = parts.join(' · ');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FORM SUBMISSION
+═══════════════════════════════════════════════════════════ */
+function validate() {
+  let ok = true;
+  const nombre = document.getElementById('inputNombre');
+  const wa = document.getElementById('inputWA');
+  const area = document.getElementById('inputArea');
+
+  [nombre, wa, area].forEach(f => f.closest('.field-group').classList.remove('error'));
+
+  if (!nombre.value.trim() || nombre.value.trim().split(' ').length < 2) {
+    nombre.closest('.field-group').classList.add('error'); ok = false;
+  }
+  if (!wa.value.trim() || wa.value.trim().length < 8) {
+    wa.closest('.field-group').classList.add('error'); ok = false;
+  }
+  if (!area.value) {
+    area.closest('.field-group').classList.add('error'); ok = false;
+  }
+  if (!state.selectedService) {
+    showToast('Por favor selecciona un arte primero.'); ok = false;
+  }
+  if (!state.selectedDate) {
+    showToast('Por favor selecciona una fecha.'); ok = false;
+  }
+  if (!state.selectedTime) {
+    showToast('Por favor selecciona un horario.'); ok = false;
+  }
+  return ok;
+}
+
+function handleSubmit() {
+  if (!validate()) return;
+
+  const nombre = document.getElementById('inputNombre').value.trim();
+  const wa = document.getElementById('inputWA').value.trim();
+  const area = document.getElementById('inputArea').value;
+  const nota = document.getElementById('inputNota').value.trim();
+  const [y, m, d] = state.selectedDate.split('-').map(Number);
+  const fechaStr = `${d} de ${months[m-1]} de ${y}`;
+
+  const mensaje = [
+    `Saludos al equipo de *Sanctum Grimorio*,`,
+    ``,
+    `Solicito formalmente una audiencia para la siguiente sesión:`,
+    ``,
+    `• *Arte:* ${state.selectedService.name}`,
+    `• *Fecha solicitada:* ${fechaStr}`,
+    `• *Horario preferido:* ${state.selectedTime} hrs`,
+    `• *Área de Enfoque:* ${area}`,
+    nota ? `• *Nota adicional:* ${nota}` : null,
+    ``,
+    `*Datos de contacto:*`,
+    `• Nombre: ${nombre}`,
+    `• WhatsApp: ${wa}`,
+    ``,
+    `Quedo a la espera de vuestra confirmación. Con gratitud.`,
+    ``,
+    `Atentamente,`,
+    `${nombre}`
+  ].filter(l => l !== null).join('\n');
+
+  state.whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
+
+  // Build modal content
+  const modal = document.getElementById('modalSummaryContent');
+  const rows = [
+    ['Arte', state.selectedService.name],
+    ['Duración', state.selectedService.duration],
+    ['Inversión', state.selectedService.price],
+    ['Fecha', fechaStr],
+    ['Horario', `${state.selectedTime} hrs`],
+    ['Nombre', nombre],
+    ['Área', area]
+  ];
+  modal.innerHTML = rows.map(([k, v]) => `
+    <div class="modal-summary-row">
+      <span class="modal-summary-key">${k}</span>
+      <span class="modal-summary-val">${v}</span>
+    </div>
+  `).join('');
+
+  openModal();
+}
+
+function goToWhatsApp() {
+  if (state.whatsappLink) window.open(state.whatsappLink, '_blank');
+  closeModal();
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MODAL
+═══════════════════════════════════════════════════════════ */
+function openModal() {
+  document.getElementById('confirmModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('confirmModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.getElementById('confirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════════ */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INTERSECTION OBSERVER (REVEAL)
+═══════════════════════════════════════════════════════════ */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+renderCalendar();
+</script>
+</body>
+</html>
